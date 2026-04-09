@@ -92,27 +92,28 @@
                 .then((data) => {
                     console.log(data);
                     data.forEach((el) => {
-                       	let rawUrl = el.image1;
-					    let finalImg = "";
-					
-					    if (rawUrl && rawUrl.includes('id=')) {
-					        // ดึง ID ออกมา
-					        let id = rawUrl.split('id=')[1].split('&')[0];
-					        // ใช้รูปแบบ thumbnail แทน (ปรับขนาดได้ด้วย s1000 คือ 1000px)
-					        finalImg = `https://lh3.googleusercontent.com/u/0/d/${id}=s1000`;
-					    } else {
-					        finalImg = rawUrl;
-					    }
+                      // 1. ดึง ID จาก URL เดิม
+    let fileId = "";
+    if (el.image1.includes("id=")) {
+        fileId = el.image1.split("id=")[1].split("&")[0];
+    } else if (el.image1.includes("file/d/")) {
+        fileId = el.image1.split("file/d/")[1].split("/")[0];
+    }
 
-					    let els = `
-					        <div class="ols-block">							
-					            <img src="${finalImg}" onerror="this.src='https://via.placeholder.com/120x120?text=Error'">
-					            <p>วันที่แจ้ง: ${el.requestdate}</p>
-					            <p>ปัญหา: ${el.request}</p>
-					            <p>สถานะ: ${el.status}</p>
-					        </div>`;
-					    
-					    output.insertAdjacentHTML('beforeend', els);
+    // 2. สร้าง URL ใหม่แบบ Thumbnail (วิธีนี้โหลดไวและไม่ค่อยโดนบล็อกในมือถือ)
+    let displayUrl = fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w400` : "";
+
+    let els = `
+        <div class="ols-block" style="display: flex; align-items: center; overflow: hidden;">
+            <img src="${displayUrl}" onerror="this.src='https://via.placeholder.com/120x120?text=No+Image'">
+            <div style="padding: 10px;">
+                <p style="margin:0">วันที่แจ้ง: ${el.requestdate.split('T')[0]}</p>
+                <p style="margin:0">ปัญหา: ${el.request}</p>
+                <p style="margin:0">สถานะ: ${el.status}</p>
+            </div>
+        </div>`;
+
+    output.insertAdjacentHTML('beforeend', els);
                         
                     })
             })
