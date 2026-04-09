@@ -64,12 +64,16 @@
 	  border-radius: 10px;
 	  line-height: normal;
 	  }
-	  img{width:120px;height:inherit;
-	  float:left;
-	  margin-right:10px;
-	  border-top-left-radius:10px;
-	  border-bottom-left-radius:10px;
-	  }
+	  img {
+		    width: 120px;
+		    height: 120px; /* ระบุตัวเลขไปเลย */
+		    object-fit: cover; /* ช่วยให้รูปไม่เบี้ยว */
+		    float: left;
+		    margin-right: 10px;
+		    border-top-left-radius: 10px;
+		    border-bottom-left-radius: 10px;
+		    background-color: #eee; /* ใส่สีพื้นหลังไว้ทดสอบ ถ้ารูปไม่ขึ้นจะเห็นเป็นสีเทา */
+		}
     </style>
 </head>
 
