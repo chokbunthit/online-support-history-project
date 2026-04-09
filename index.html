@@ -88,17 +88,33 @@
                 .then((data) => {
                     console.log(data);
                     data.forEach((el) => {
-                        //console.log(el);
-                        
-                        let els = `
-                            <div class="ols-block">
-                              <img src="${el.image1}">
-                              <p>วันที่แจ้ง:${el.requestdate}</p>
-                              <p>ปัญหา:${el.request}</p>
-                              <p>สถานะ:${el.status}</p>
-                            </div>`
-                         //output.innerHTML += `${el.image1} ${el.requestdate} ${el.request} <br>`;
-                        output.insertAdjacentHTML('beforeend', els);
+                        // --- เพิ่มส่วนนี้เพื่อแปลง URL ---
+					    let rawUrl = el.image1;
+					    let directImageUrl = "";
+					
+					    if (rawUrl && rawUrl.includes('id=')) {
+					        // กรณี URL มาแบบมี id=...
+					        let id = rawUrl.split('id=')[1].split('&')[0];
+					        directImageUrl = `https://drive.google.com/uc?export=view&id=${id}`;
+					    } else if (rawUrl && rawUrl.includes('file/d/')) {
+					        // กรณี URL มาแบบ file/d/XXXXX/view
+					        let id = rawUrl.split('file/d/')[1].split('/')[0];
+					        directImageUrl = `https://drive.google.com/uc?export=view&id=${id}`;
+					    } else {
+					        // ถ้าไม่ใช่ลิงก์ Google Drive หรือเป็นค่าว่าง
+					        directImageUrl = rawUrl; 
+					    }
+					    // ----------------------------
+					
+					    let els = `
+					        <div class="ols-block">							
+					            <img src="${directImageUrl}" onerror="this.src='https://via.placeholder.com/120x120?text=No+Image'">
+					            <p>วันที่แจ้ง: ${el.requestdate}</p>
+					            <p>ปัญหา: ${el.request}</p>
+					            <p>สถานะ: ${el.status}</p>
+					        </div>`;
+					    
+					    output.insertAdjacentHTML('beforeend', els);
                         
                     })
             })
